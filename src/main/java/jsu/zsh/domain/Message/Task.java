@@ -13,7 +13,6 @@ import java.util.HashSet;
 @Builder
 public class Task extends Notice{
     private HashSet<outCome> outcomes = new HashSet<>();
-    private HashSet<Comment> comments = new HashSet<>();
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -24,10 +23,6 @@ public class Task extends Notice{
         private int stuId;
         private String filePath;
         private String text;
-    }
-
-    public HashSet<Comment> getComments() {
-        return comments;
     }
 
     public HashSet<outCome> getOutcomes() {

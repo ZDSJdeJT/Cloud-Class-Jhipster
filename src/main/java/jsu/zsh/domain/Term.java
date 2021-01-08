@@ -23,5 +23,35 @@ public class Term {
         return id;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getsTime() {
+        return sTime;
+    }
+
+    public void setsTime(Date sTime) {
+        this.sTime = sTime;
+    }
+
+    public Date geteTime() {
+        return eTime;
+    }
+
+    public void seteTime(Date eTime) {
+        this.eTime = eTime;
+    }
+
+    public HashSet<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(HashSet<Course> courses) {
+        this.courses = courses;
+    }
 }

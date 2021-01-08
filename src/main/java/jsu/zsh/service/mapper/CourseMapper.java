@@ -1,10 +1,8 @@
 package jsu.zsh.service.mapper;
 
 import jsu.zsh.domain.Course;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -17,7 +15,15 @@ public interface CourseMapper {
     @Select("select * from 课程表")
     List<Course> findAll();
 
-    @Select("SELECT * from 课程表 where 学期Id = #{}")
-    List<Course> findByTermId();
+    @Select("select * from 课程表 where 学期Id = #{id}")
+    List<Course> findByTermId(@RequestParam(value = "Id")long id);
+
+    @Delete("delete from 课程表 where id=#{id}")
+    int deleteById(@RequestParam(value = "Id")long id);
+
+
+    @Update("update 课程表 set 课程名称 = #{name},课程结束周 = #{eTime},课程起始周 = #{sTime},是否单双周 = #{isSingle},学期Id = #{termId}")
+    int upDate(Course course);
+
 
 }

@@ -23,4 +23,6 @@ public class Student {
     private Power power;
     private String belongsClass;
     private String headPortrait;
+
+
 }

@@ -16,6 +16,9 @@ public interface TermMapper {
     @Select("select * from 学期表 where id = #{id}")
     Optional<Term> findById(@Param("id")long id);
 
+    @Select("select * from 学期表 where 学期开始时间 < now() and 学期结束时间 > now()")
+    Optional<Term> findByNow();
+
     @Select("select * from 学期表")
     List<Term> findAll();
 

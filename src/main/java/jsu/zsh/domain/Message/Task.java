@@ -25,4 +25,13 @@ public class Task extends Notice{
         private String filePath;
         private String text;
     }
+
+    public HashSet<Comment> getComments() {
+        return comments;
+    }
+
+    public HashSet<outCome> getOutcomes() {
+        return outcomes;
+    }
+
 }

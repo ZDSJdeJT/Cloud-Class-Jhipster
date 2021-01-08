@@ -4,14 +4,16 @@ import jsu.zsh.domain.Message.Message;
 import jsu.zsh.domain.Message.Notice;
 import jsu.zsh.domain.Term;
 import jsu.zsh.service.mapper.MessageMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/message")
+@RequestMapping("/api/message")
 public class MessageController {
+    @Autowired
     MessageMapper messageMapper;
 
     @GetMapping("/getDynamic")

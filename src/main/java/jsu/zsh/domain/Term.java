@@ -18,4 +18,10 @@ public class Term {
     private Date sTime;
     private Date eTime;
     private HashSet<Course> courses = new HashSet<>();
+
+    public int getId() {
+        return id;
+    }
+
+
 }

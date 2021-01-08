@@ -14,4 +14,12 @@ import java.util.List;
 @Builder
 public class Dynamic extends Message{
     private List<Comment> Comments = new ArrayList<>();
+
+    public List<Comment> getComments() {
+        return Comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        Comments = comments;
+    }
 }

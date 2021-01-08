@@ -31,7 +31,39 @@ public class Message implements Tags,Comment{
     }
     public Message comment(Comment Comment){
         Message r = new Message();
-
         return r;
     }
+
+    public long getId() {
+        return id;
+    }
+
+
+    public String getContent() {
+        return content;
+    }
+
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public long getPostUserId() {
+        return postUserId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public boolean getLogicallyDelete(){
+        return  this.logicallyDelete;
+    }
+
+
+    public void setLogicallyDelete(boolean logicallyDelete) {
+        this.logicallyDelete = logicallyDelete;
+    }
+
+
 }

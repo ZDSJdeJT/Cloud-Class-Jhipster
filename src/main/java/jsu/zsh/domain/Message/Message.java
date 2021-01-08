@@ -1,5 +1,6 @@
 package jsu.zsh.domain.Message;
 
+import jsu.zsh.service.util.dataUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -52,18 +53,12 @@ public class Message implements Tags,Comment{
         return postUserId;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public void setPostUserId(long postUserId) {
+        this.postUserId = postUserId;
     }
 
-    public boolean getLogicallyDelete(){
-        return  this.logicallyDelete;
+    public String getCreateTime() {
+        return dataUtil.sdf.format(createTime);
     }
-
-
-    public void setLogicallyDelete(boolean logicallyDelete) {
-        this.logicallyDelete = logicallyDelete;
-    }
-
 
 }

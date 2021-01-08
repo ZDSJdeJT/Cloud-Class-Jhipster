@@ -22,4 +22,9 @@ public class Dynamic extends Message{
     public void setComments(List<Comment> comments) {
         Comments = comments;
     }
+
+    public Dynamic(String context, long postUserId){
+        this.setContent(context);
+        this.setPostUserId(postUserId);
+    }
 }

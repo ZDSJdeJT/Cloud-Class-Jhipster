@@ -12,7 +12,7 @@ import java.util.List;
 public interface MessageMapper {
 
     @Insert("insert into 消息表(内容,创建时间,发表者学号,消息类型) values(#{content},now(),#{postUserId},1)")
-    @Options(useGeneratedKeys = true)
+    @Options(useGeneratedKeys = true,keyProperty ="id")
     int saveDynamic(Message message);
 
     @Insert("insert into 消息表(标题,内容,创建时间,截至时间,发表者学号,消息类型) values(#{title},#{content},now(),#{cutTime},#{postUserId},5)")
@@ -66,7 +66,9 @@ public interface MessageMapper {
     @Select("select * from 消息表 where 消息类型 = #{type}  and 逻辑删除 = 0")
     @Results({
         @Result(id =true,column ="id",property = "id"),
-        @Result(column = "创建时间",property = "createTime")
+        @Result(column = "内容",property = "content"),
+        @Result(column = "创建时间",property = "createTime"),
+        @Result(column = "发表者学号",property = "postUserId")
 
     })
     List<Message> findMsByType(@Param("type") int type);

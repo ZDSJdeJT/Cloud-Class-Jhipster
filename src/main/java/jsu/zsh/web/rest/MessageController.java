@@ -1,8 +1,8 @@
 package jsu.zsh.web.rest;
 
+import jsu.zsh.domain.Message.Dynamic;
 import jsu.zsh.domain.Message.Message;
 import jsu.zsh.domain.Message.Notice;
-import jsu.zsh.domain.Term;
 import jsu.zsh.service.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +37,10 @@ public class MessageController {
     }
 
     @PostMapping("/addDynamic")
-    boolean addDynamic(@Valid @RequestBody Message message){
-        return messageMapper.saveDynamic(message)>0;
+    long addDynamic(@Valid @RequestBody String content,long postUserId){
+        Message dynamic =new Dynamic(content,postUserId);
+        messageMapper.saveDynamic(dynamic);
+        return dynamic.getId();
     }
 
     @PostMapping("/addNotice")

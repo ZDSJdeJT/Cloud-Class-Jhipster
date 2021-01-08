@@ -17,5 +17,7 @@ public interface CourseMapper {
     @Select("select * from 课程表")
     List<Course> findAll();
 
+    @Select("SELECT * from 课程表 where 学期Id = #{}")
+    List<Course> findByTermId();
 
 }

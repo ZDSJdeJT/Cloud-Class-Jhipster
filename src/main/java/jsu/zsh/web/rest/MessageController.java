@@ -3,6 +3,8 @@ package jsu.zsh.web.rest;
 import jsu.zsh.domain.Message.Dynamic;
 import jsu.zsh.domain.Message.Message;
 import jsu.zsh.domain.Message.Notice;
+import jsu.zsh.service.dto.CommentDTO;
+import jsu.zsh.service.dto.DynamicDTO;
 import jsu.zsh.service.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +19,8 @@ public class MessageController {
     MessageMapper messageMapper;
 
     @GetMapping("/getDynamic")
-    List<Message> getDynamic(){
-        return messageMapper.findMsByType(1);
+    List<DynamicDTO> getDynamic(){
+        return messageMapper.findDynamic();
     }
 
     @GetMapping("/getNotice")
@@ -32,8 +34,12 @@ public class MessageController {
     }
 
     @GetMapping("/getComment")
-    List<Message> getComment(){
-        return messageMapper.findComment();
+    List<CommentDTO> getComment(long id){
+        List<CommentDTO> commentDTOS = messageMapper.findComment(id);
+        for (CommentDTO item:commentDTOS) {
+            item.setComments(messageMapper.findCComment(item.getId()));
+        }
+        return commentDTOS;
     }
 
     @PostMapping("/addDynamic")
@@ -69,7 +75,7 @@ public class MessageController {
         return messageMapper.updateText(text,id)>0;
     }
 
-    @PostMapping("/updataNotice")
+    @PostMapping("/updateNotice")
     boolean updateNotice(@Valid @RequestBody Notice notice){
         return messageMapper.updateNotice(notice)>0;
     }

@@ -3,6 +3,9 @@ package jsu.zsh.service.mapper;
 
 import jsu.zsh.domain.Message.Message;
 import jsu.zsh.domain.Message.Notice;
+import jsu.zsh.service.dto.CommentDTO;
+import jsu.zsh.service.dto.DynamicDTO;
+import jsu.zsh.service.dto.cComment;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
@@ -74,14 +77,36 @@ public interface MessageMapper {
     List<Message> findMsByType(@Param("type") int type);
 
     //查询
-    @Select("select * from 消息表 where 消息类型 = 2 or 消息类型 = 3 and 逻辑删除 = 0")
+    @Select("select * from 消息表 where 消息类型 = 1 and 逻辑删除 = 0")
     @Results({
         @Result(id =true,column ="id",property = "id"),
-        @Result(column = "创建时间",property = "createTime")
+        @Result(column = "内容",property = "content"),
+        @Result(column = "创建时间",property = "createTime"),
+        @Result(column = "发表者学号",property = "postUserId")
 
     })
-    List<Message> findComment();
+    List<DynamicDTO> findDynamic();
 
+
+    //查询
+    @Select("select * from 消息表 where 消息类型 = 2 and 回复评论id = #{id} and 逻辑删除 = 0")
+    @Results({
+        @Result(id =true,column ="id",property = "id"),
+        @Result(column = "内容",property = "content"),
+        @Result(column = "创建时间",property = "createTime"),
+        @Result(column = "发表者学号",property = "postUserId")
+
+    })
+    List<CommentDTO> findComment(@Param("id") long parentId);
+
+    @Select("select * from 消息表 where 消息类型 = 3 and 回复评论id = #{id}  and 逻辑删除 = 0")
+    @Results({
+        @Result(id =true,column ="id",property = "id"),
+        @Result(column = "内容",property = "content"),
+        @Result(column = "创建时间",property = "createTime"),
+        @Result(column = "发表者学号",property = "postUserId")
+    })
+    List<cComment> findCComment(@Param("id") long parentId);
 
     @Delete("delete from 消息表 where id = #{id}")
     int trueDelete(@Param("id") long id);

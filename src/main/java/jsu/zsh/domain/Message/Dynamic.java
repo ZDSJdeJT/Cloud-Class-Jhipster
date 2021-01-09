@@ -1,5 +1,6 @@
 package jsu.zsh.domain.Message;
 
+import jsu.zsh.service.util.dateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,10 +16,6 @@ import java.util.List;
 public class Dynamic extends Message{
     private List<Comment> Comments = new ArrayList<>();
 
-    public List<Comment> getComments() {
-        return Comments;
-    }
-
     public void setComments(List<Comment> comments) {
         Comments = comments;
     }
@@ -26,5 +23,9 @@ public class Dynamic extends Message{
     public Dynamic(String context, long postUserId){
         this.setContent(context);
         this.setPostUserId(postUserId);
+    }
+    @Override
+    public String getFormatCreateTime() {
+        return dateUtil.sdf.format(super.getCreateTime());
     }
 }

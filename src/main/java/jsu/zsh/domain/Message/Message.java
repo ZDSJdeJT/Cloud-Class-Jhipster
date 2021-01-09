@@ -1,6 +1,6 @@
 package jsu.zsh.domain.Message;
 
-import jsu.zsh.service.util.dataUtil;
+import jsu.zsh.service.util.dateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +13,11 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class Message implements Tags,Comment{
-    private long id;
-    private String content;
-    private Date createTime;
-    private boolean logicallyDelete;
-    private long postUserId;
+    public long id;
+    public String content;
+    public Date createTime;
+    public boolean logicallyDelete;
+    public long postUserId;
     public boolean giveALike(){
         return true;
     };
@@ -57,8 +57,10 @@ public class Message implements Tags,Comment{
         this.postUserId = postUserId;
     }
 
-    public String getCreateTime() {
-        return dataUtil.sdf.format(createTime);
+    public String getFormatCreateTime() {
+        return dateUtil.sdf.format(createTime);
     }
+
+    public Date getCreateTime(){return this.createTime;}
 
 }

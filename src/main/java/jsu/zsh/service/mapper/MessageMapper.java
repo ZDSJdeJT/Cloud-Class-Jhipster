@@ -7,6 +7,7 @@ import jsu.zsh.service.dto.CommentDTO;
 import jsu.zsh.service.dto.DynamicDTO;
 import jsu.zsh.service.dto.NoticeDTO;
 import jsu.zsh.service.dto.cComment;
+import jsu.zsh.service.provider.messageProvider;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
@@ -19,18 +20,22 @@ public interface MessageMapper {
     @Options(useGeneratedKeys = true,keyProperty ="id")
     int saveDynamic(Message message);
 
-    @Insert("insert into 消息表(标题,内容,创建时间,截至时间,发表者学号,消息类型) values(#{title},#{content},now(),#{cutTime},#{postUserId},5)")
-    @Options(useGeneratedKeys = true)
-    int saveNotice(Notice notice);
+    @Insert("insert into 消息表(标题,内容,创建时间,截至时间,发表者学号,消息类型) values(#{title},#{content},now(),#{cutTime},#{postUserId},#{type})")
+    @Options(useGeneratedKeys = true,keyProperty ="id")
+    int saveNotice(NoticeDTO notice,@Param("type")int type);
 
-    @Insert("insert into 消息表(内容,创建时间,发表者学号,回复评论id,消息类型) values(#{title},#{content},now(),#{cutTime},#{postUserId},#{messageId},2)")
-    @Options(useGeneratedKeys = true)
-    int saveComment(Message message);
+    @InsertProvider(type = messageProvider.class, method = "insertForCrowd")
+    Integer saveForCrowd(List<Long> list,long id);
 
 
-    @Insert("insert into 消息表(内容,创建时间,发表者学号,回复评论id,消息类型) values(#{title},#{content},now(),#{cutTime},#{postUserId},#{commentId},3)")
+    @Insert("insert into 消息表(内容,创建时间,发表者学号,评论消息id,消息类型) values(#{context},now(),#{postUserID},#{msID},2)")
     @Options(useGeneratedKeys = true)
-    int saveCComment(Message message);
+    int saveComment(@Param("content")String content,@Param("postUserID")long postUserID,@Param("msID")long msID);
+
+
+    @Insert("insert into 消息表(内容,创建时间,发表者学号,回复评论id,评论评论id,评论消息id,消息类型) values(#{context},now(),#{postUserID},#{replyId},#{commentId}#{msID},3)")
+    @Options(useGeneratedKeys = true)
+    int saveCComment(@Param("content")String content,@Param("postUserID")long postUserID,@Param("replyId")Long replyId,@Param("commentId")long commentId,@Param("msID")long msID);
 
     @Insert("insert into 消息表(标题,内容,创建时间,截至时间,发表者学号,消息类型) values(#{title},#{content},now(),#{cutTime},#{postUserId},4)")
     @Options(useGeneratedKeys = true)
@@ -53,7 +58,7 @@ public interface MessageMapper {
     @Results({
         @Result(column ="学号",property = "id"),
     })
-    List<Integer> findForCrowd(@Param("msID")long msID);
+    List<Long> findForCrowd(@Param("msID")long msID);
 
     @Select("select * from 消息表 where 创建时间> #{sTime} and 创建时间 < #{eTime} and 逻辑删除 = 0")
     @Results({
@@ -129,10 +134,11 @@ public interface MessageMapper {
     @Delete("delete from 消息表 where id = #{id}")
     int trueDelete(@Param("id") long id);
 
-
     @Update("update 消息表 set 逻辑删除 = 1 where id = #{id}")
     int falseDelete(@Param("id") long id);
 
+    @Delete("delete from 面向人群表 where 消息Id = #{msId}")
+    int deleteForCrowd(@Param("msId") long msId);
 
     @Update("update 消息表 set 标题 = #{title} where id = #{id}")
     int updateTitle(@Param("title") String title,@Param("id") long id);
@@ -145,5 +151,6 @@ public interface MessageMapper {
 
     @Update("update 消息表 set 标题 = #{title},内容 =  #{text},截至时间 = #{eTime} where id = #{id}")
     int updateNotice(Notice notice);
+
 
 }

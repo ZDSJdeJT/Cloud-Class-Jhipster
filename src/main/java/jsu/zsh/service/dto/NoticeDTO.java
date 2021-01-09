@@ -14,7 +14,7 @@ public class NoticeDTO {
     private Integer tagsCount;
     private Integer commentsCount;
     private String postUserHeadPortraitUri;
-    List<Integer> forCrowd;
+    List<Long> forCrowd;
 
     public void setCommentsCount(Integer commentsCount) {
         this.commentsCount = commentsCount;
@@ -25,11 +25,11 @@ public class NoticeDTO {
     }
 
 
-    public List<Integer> getForCrowd() {
+    public List<Long> getForCrowd() {
         return forCrowd;
     }
 
-    public void setForCrowd(List<Integer> forCrowd) {
+    public void setForCrowd(List<Long> forCrowd) {
         this.forCrowd = forCrowd;
     }
 

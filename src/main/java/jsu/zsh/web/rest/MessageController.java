@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -60,37 +61,49 @@ public class MessageController {
     }
 
     @PostMapping("/addDynamic")
-    long addDynamic(@Valid @RequestBody String content,@RequestParam(value = "postUserId",required = true)long postUserId){
+    long addDynamic(@Valid @RequestBody String content,@RequestParam(value = "postUserId")long postUserId){
         Message dynamic =new Dynamic(content,postUserId);
         messageMapper.saveDynamic(dynamic);
         return dynamic.getId();
     }
 
     @PostMapping("/addNotice")
-    boolean addNotice(@Valid @RequestBody String content
-        ,@RequestParam(value = "postUserId",required = true)long postUserId){
-        return false;
+    Long addNotice(@Valid @RequestBody NoticeDTO notice){
+        messageMapper.saveNotice(notice,4);
+        return messageMapper.saveForCrowd(notice.getForCrowd(),notice.getId())>0?notice.getId():-1;
     }
 
     @PostMapping("/addComment")
-    boolean addComment(@Valid @RequestBody Message message){
-        return messageMapper.saveComment(message)>0;
+    boolean addComment(@Valid @RequestBody String content,
+                       @RequestParam(value = "postUserId")long postUserId,
+                       @RequestParam(value = "msID")long msID){
+        return messageMapper.saveComment(content, postUserId, msID)>0;
     }
 
     @PostMapping("/addCComment")
-    boolean addCComment(@Valid @RequestBody Message message){
-        return messageMapper.saveCComment(message)>0;
+    boolean addCComment(@Valid @RequestBody String content,
+                        @RequestParam(value = "postUserId")long postUserId,
+                        @RequestParam(value = "commentId")long commentId,
+                        @RequestParam(value = "replyId") Long replyId,
+                        @RequestParam(value = "msID")long msID){
+        return messageMapper.saveCComment(content,postUserId,commentId,replyId,msID)>0;
     }
 
     @PostMapping("/addTask")
-    boolean addTask(@Valid @RequestBody Notice notice){
-        return messageMapper.saveTask(notice)>0;
+    Long addTask(@Valid @RequestBody NoticeDTO notice){
+        messageMapper.saveNotice(notice,4);
+        return messageMapper.saveForCrowd(notice.getForCrowd(),notice.getId())>0?notice.getId():-1;
     }
-
     @PostMapping("/updateText")
     boolean updateText(@RequestParam(value = "text")String text,
                        @RequestParam(value = "id")long id){
         return messageMapper.updateText(text,id)>0;
+    }
+
+    @PostMapping("/updateForCrowd")
+    boolean updateForCrowd(@Valid @RequestBody List<Long> crowd,@RequestParam(value = "msID")long msID){
+        if(messageMapper.deleteForCrowd(msID) <=0) return false;
+        return messageMapper.saveForCrowd(crowd,msID)>0;
     }
 
     @PostMapping("/updateNotice")
@@ -107,5 +120,15 @@ public class MessageController {
     @GetMapping("/falseDeleteMs")
     boolean falseDeleteMs(@RequestParam(value = "id")long id){
         return messageMapper.falseDelete(id)>0;
+    }
+
+    @PostMapping("/updateETime")
+    boolean updateETime(@Valid @RequestBody Date eTime, @RequestParam(value = "msID")long msID){
+        return messageMapper.updateETime(eTime,msID)>0;
+    }
+
+    @PostMapping("/updateTitle")
+    boolean updateTitle(@Valid @RequestBody String title, @RequestParam(value = "msID")long msID){
+        return messageMapper.updateTitle(title,msID)>0;
     }
 }

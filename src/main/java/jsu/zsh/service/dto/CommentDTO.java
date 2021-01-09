@@ -9,13 +9,42 @@ import java.util.List;
 public class CommentDTO {
     private long id;
     private String content;
+    private String petName;
     private Date createTime;
     private long postUserId;
+    private Integer tagsCount;
+    private Integer cCommentsCount;
     private String postUserHeadPortraitUri;
-    private int commentId = 0;
-
 
     private List<cComment> comments;
+
+    public String getPostUserHeadPortraitUri() {
+        return postUserHeadPortraitUri;
+    }
+
+    public Integer getcCommentsCount() {
+        return cCommentsCount;
+    }
+
+    public Integer getTagsCount() {
+        return tagsCount;
+    }
+
+    public void setPetName(String petName) {
+        this.petName = petName;
+    }
+
+    public void setcCommentsCount(Integer cCommentsCount) {
+        this.cCommentsCount = cCommentsCount;
+    }
+
+    public void setTagsCount(Integer tagsCount) {
+        this.tagsCount = tagsCount;
+    }
+
+    public String getPetName() {
+        return petName;
+    }
 
     public long getId() {
         return id;
@@ -47,14 +76,6 @@ public class CommentDTO {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public void setCommentId(Integer commentId) {
-        this.commentId = commentId;
-    }
-
-    public Integer getCommentId() {
-        return commentId;
     }
 
     public List<cComment> getComments() {

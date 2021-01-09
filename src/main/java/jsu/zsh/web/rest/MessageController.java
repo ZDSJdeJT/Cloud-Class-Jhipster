@@ -38,6 +38,7 @@ public class MessageController {
         List<CommentDTO> commentDTOS = messageMapper.findComment(id);
         for (CommentDTO item:commentDTOS) {
             item.setComments(messageMapper.findCComment(item.getId()));
+            item.setcCommentsCount(item.getComments().size());
         }
         return commentDTOS;
     }

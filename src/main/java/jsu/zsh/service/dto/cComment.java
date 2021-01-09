@@ -5,10 +5,13 @@ import java.util.Date;
 public class cComment{
     private long id;
     private String content;
+    private String petName;
     private Date createTime;
     private long postUserId;
+    private Integer tagsCount;
+    private String replyPetName;
     private String postUserHeadPortraitUri;
-    private int commentId = 0;
+    private int commentId;
 
     public Date getCreateTime() {
         return createTime;
@@ -33,4 +36,26 @@ public class cComment{
     public String getPostUserHeadPortraitUri() {
         return postUserHeadPortraitUri;
     }
+
+    public String getPetName() {
+        return petName;
+    }
+
+    public Integer getTagsCount() {
+        return tagsCount;
+    }
+
+    public void setPetName(String petName) {
+        this.petName = petName;
+    }
+
+
+    public void setTagsCount(Integer tagsCount) {
+        this.tagsCount = tagsCount;
+    }
+
+    public void setCommentId(int commentId) {
+        this.commentId = commentId;
+    }
 }
+

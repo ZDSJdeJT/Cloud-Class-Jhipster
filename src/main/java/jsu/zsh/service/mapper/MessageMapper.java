@@ -5,6 +5,7 @@ import jsu.zsh.domain.Message.Message;
 import jsu.zsh.domain.Message.Notice;
 import jsu.zsh.service.dto.CommentDTO;
 import jsu.zsh.service.dto.DynamicDTO;
+import jsu.zsh.service.dto.NoticeDTO;
 import jsu.zsh.service.dto.cComment;
 import org.apache.ibatis.annotations.*;
 
@@ -35,19 +36,24 @@ public interface MessageMapper {
     @Options(useGeneratedKeys = true)
     int saveTask(Notice notice);
 
-    @Select("select * from 消息表 where 截至时间>now() and 消息类型 = 5 and 逻辑删除 = 0")
+    @Select("select id,标题,内容,创建时间,截至时间,发表者学号,first_name,image_url from 消息表,jhi_user where 截至时间>now() and 消息类型 = #{type} and 逻辑删除 = 0")
     @Results({
         @Result(id =true,column ="id",property = "id"),
-        @Result(column = "创建时间",property = "createTime")
+        @Result(column = "标题",property = "title"),
+        @Result(column = "内容",property = "content"),
+        @Result(column = "创建时间",property = "createTime"),
+        @Result(column = "截至时间",property = "cutTime"),
+        @Result(column = "发表者学号",property = "postUserId"),
+        @Result(column = "first_name",property = "petName"),
+        @Result(column = "image_url",property = "postUserHeadPortraitUri"),
     })
-    List<Notice> findNotice();
+    List<NoticeDTO> findNotice(@Param("type")long type);
 
-    @Select("select * from 消息表 where 截至时间>now() and 消息类型 = 4 and 逻辑删除 = 0")
+    @Select("select 学号 from 面向人群表 where 消息Id =  #{msID}")
     @Results({
-        @Result(id =true,column ="id",property = "id"),
-        @Result(column = "创建时间",property = "createTime")
+        @Result(column ="学号",property = "id"),
     })
-    List<Notice> findTask();
+    List<Integer> findForCrowd(@Param("msID")long msID);
 
     @Select("select * from 消息表 where 创建时间> #{sTime} and 创建时间 < #{eTime} and 逻辑删除 = 0")
     @Results({
@@ -76,44 +82,47 @@ public interface MessageMapper {
     })
     List<Message> findMsByType(@Param("type") int type);
 
-    //查询
-    @Select("select id,内容,创建时间,发表者学号,count(点赞人学号) as 点赞数,count(回复) as 回复数,昵称,头像路径 from 消息表,点赞表,用户表,(select 评论消息id as 回复 from 消息表) as 回复数 where id = 点赞表.消息id and 发表者学号 = 学号 and 消息类型 = 1 and 逻辑删除 = 0")
+    @Select("select count(点赞人学号) from 点赞表 where 消息id = #{msID}")
+    Integer findTagsCount(long msID);
+
+    @Select("select count(评论消息id) from 消息表 where 评论消息id = #{msID}")
+    Integer findCommentsCount(long msID);
+
+    @Select("select 消息表.id,内容,创建时间,发表者学号,first_name,image_url from 消息表,jhi_user where login = 发表者学号 and 消息类型 = 1 and 逻辑删除 = 0")
     @Results({
         @Result(id =true,column ="id",property = "id"),
         @Result(column = "内容",property = "content"),
         @Result(column = "创建时间",property = "createTime"),
         @Result(column = "发表者学号",property = "postUserId"),
-        @Result(column = "回复数",property = "commentsCount"),
-        @Result(column = "点赞数",property = "tagsCount"),
-        @Result(column = "昵称",property = "petName"),
-        @Result(column = "头像路径",property = "postUserHeadPortraitUri")
+        @Result(column = "first_name",property = "petName"),
+        @Result(column = "image_url",property = "postUserHeadPortraitUri")
     })
     List<DynamicDTO> findDynamic();
 
-
-    //查询
-    @Select("select id,内容,创建时间,发表者学号,count(点赞人学号) as 点赞数,昵称,头像路径 from 消息表,点赞表,用户表 where id = 点赞表.消息id and 发表者学号 = 学号 and 消息类型 = 2 and 评论消息id = #{id} and 逻辑删除 = 0")
+    @Select("select 消息表.id,内容,创建时间,发表者学号,first_name,image_url from 消息表,jhi_user where login = 发表者学号 and 消息类型 = 2 and 评论消息id=#{id} and 逻辑删除 = 0")
     @Results({
         @Result(id =true,column ="id",property = "id"),
         @Result(column = "内容",property = "content"),
         @Result(column = "创建时间",property = "createTime"),
         @Result(column = "发表者学号",property = "postUserId"),
-        @Result(column = "点赞数",property = "tagsCount"),
-        @Result(column = "昵称",property = "petName"),
-        @Result(column = "头像路径",property = "postUserHeadPortraitUri")
+        @Result(column = "first_name",property = "petName"),
+        @Result(column = "image_url",property = "postUserHeadPortraitUri")
     })
     List<CommentDTO> findComment(@Param("id") long parentId);
 
-    @Select("select id,内容,创建时间,发表者学号,回复评论id,count(点赞人学号) as 点赞数,昵称,头像路径 from 消息表 as 回复表,点赞表,用户表,(select 昵称 as 回复名 from 消息表,用户表 where id = 回复评论id and 回复表.发表者学号 = 学号) as 回复名表 where id = 点赞表.消息id and 发表者学号 = 学号 and 消息类型 = 3 and 评论消息id = #{id}  and 逻辑删除 = 0")
+    @Select("SELECT 消息表.id,内容,创建时间,发表者学号,回复人名表.回复人名,first_name,image_url" +
+        " FROM 消息表,jhi_user," +
+        "(SELECT 回复人.first_name AS 回复人名,回复.id as 回复id FROM jhi_user AS 回复人,消息表 AS 回复 WHERE 回复人.login = 回复.发表者学号)" +
+        " AS 回复人名表 WHERE login = 发表者学号 AND 回复id = 评论消息id AND 消息类型 = 3 AND 评论评论id = 3 and 逻辑删除 = 0")
     @Results({
         @Result(id =true,column ="id",property = "id"),
         @Result(column = "内容",property = "content"),
         @Result(column = "创建时间",property = "createTime"),
         @Result(column = "发表者学号",property = "postUserId"),
-        @Result(column = "回复评论ID",property = "commentId"),
-        @Result(column = "点赞数",property = "tagsCount"),
-        @Result(column = "昵称",property = "petName"),
-        @Result(column = "头像路径",property = "postUserHeadPortraitUri")
+        @Result(column = "回复人名",property = "replyPetName"),
+        @Result(column = "first_name",property = "petName"),
+        @Result(column = "image_url",property = "postUserHeadPortraitUri")
+
     })
     List<cComment> findCComment(@Param("id") long parentId);
 

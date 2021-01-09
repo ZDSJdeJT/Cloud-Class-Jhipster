@@ -14,7 +14,7 @@ public interface StudentMapper {
     Student findById(@Param("id")long id);
 
     @Select("select 昵称 from 用户表 where 学号 = #{id}")
-    Student find昵称ById(@Param("id")long id);
+    Student findPetNameById(@Param("id")long id);
 
     @Insert("insert into 用户表(学号,姓名,昵称,性别,密码,权限,班级,头像路径)" +
         "values(#{id},#{name},#{petName},#{sex},#{passWord},#{power.ordinal()},#{belongsClass},#{headPortrait})")

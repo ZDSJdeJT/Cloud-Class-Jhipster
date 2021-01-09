@@ -5,6 +5,7 @@ import jsu.zsh.domain.Message.Message;
 import jsu.zsh.domain.Message.Notice;
 import jsu.zsh.service.dto.CommentDTO;
 import jsu.zsh.service.dto.DynamicDTO;
+import jsu.zsh.service.dto.NoticeDTO;
 import jsu.zsh.service.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,21 +21,36 @@ public class MessageController {
 
     @GetMapping("/getDynamic")
     List<DynamicDTO> getDynamic(){
-        return messageMapper.findDynamic();
+        List<DynamicDTO> dynamicDTOList = messageMapper.findDynamic();
+        for (DynamicDTO item:dynamicDTOList) {
+            item.setTagsCount(messageMapper.findTagsCount(item.getId()));
+            item.setCommentsCount(messageMapper.findCommentsCount(item.getId()));
+        }
+        return dynamicDTOList;
     }
 
     @GetMapping("/getNotice")
-    List<Notice> getNotice(){
-        return messageMapper.findNotice();
+    List<NoticeDTO> getNotice(){
+        return getNoticeORTask(5);
     }
 
     @GetMapping("/getTask")
-    List<Notice> getTask(){
-        return messageMapper.findTask();
+    List<NoticeDTO> getTask(){
+        return getNoticeORTask(4);
+    }
+
+   List<NoticeDTO> getNoticeORTask(int type){
+       List<NoticeDTO> data = messageMapper.findNotice(type);
+       for (NoticeDTO item:data) {
+           item.setTagsCount(messageMapper.findTagsCount(item.getId()));
+           item.setCommentsCount(messageMapper.findCommentsCount(item.getId()));
+           item.setForCrowd(messageMapper.findForCrowd(item.getId()));
+       }
+       return data;
     }
 
     @GetMapping("/getComment")
-    List<CommentDTO> getComment(long id){
+    List<CommentDTO> getComment(@RequestParam(value = "id")long id){
         List<CommentDTO> commentDTOS = messageMapper.findComment(id);
         for (CommentDTO item:commentDTOS) {
             item.setComments(messageMapper.findCComment(item.getId()));
@@ -44,15 +60,16 @@ public class MessageController {
     }
 
     @PostMapping("/addDynamic")
-    long addDynamic(@Valid @RequestBody String content,long postUserId){
+    long addDynamic(@Valid @RequestBody String content,@RequestParam(value = "postUserId",required = true)long postUserId){
         Message dynamic =new Dynamic(content,postUserId);
         messageMapper.saveDynamic(dynamic);
         return dynamic.getId();
     }
 
     @PostMapping("/addNotice")
-    boolean addNotice(@Valid @RequestBody Notice notice){
-        return messageMapper.saveNotice(notice)>0;
+    boolean addNotice(@Valid @RequestBody String content
+        ,@RequestParam(value = "postUserId",required = true)long postUserId){
+        return false;
     }
 
     @PostMapping("/addComment")

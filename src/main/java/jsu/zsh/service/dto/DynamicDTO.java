@@ -23,7 +23,6 @@ public class DynamicDTO
         return tagsCount;
     }
 
-
     public String getPetName() {
         return petName;
     }
@@ -32,8 +31,13 @@ public class DynamicDTO
         return postUserHeadPortraitUri;
     }
 
+
     public void setTagsCount(Integer tagsCount) {
         this.tagsCount = tagsCount;
+    }
+
+    public void setCommentsCount(Integer commentsCount) {
+        this.commentsCount = commentsCount;
     }
 
     public Integer getCommentsCount() {
@@ -56,8 +60,8 @@ public class DynamicDTO
         return content;
     }
 
-    public String getCreateTime() {
-        return dateUtil.sdf.format(createTime);
+    public Date getCreateTime() {
+        return createTime;
     }
 
     public void setContent(String content) {

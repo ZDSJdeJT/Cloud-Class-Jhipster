@@ -44,7 +44,7 @@ public interface MessageMapper {
     @Options(useGeneratedKeys = true)
     int saveTask(Notice notice);
 
-    @Select("select * from (select 消息表.id as 作业表id,标题,内容,创建时间,截至时间,发表者学号,first_name,image_url from 消息表,jhi_user where jhi_user.login = 发表者学号 and  截至时间>now() and 消息类型 = #{type} and 逻辑删除 = 0) as 作业表 LEFT JOIN 点赞表 on 点赞表.消息id = 作业表.作业表id and 点赞表.点赞人学号 = #{stuID}")
+    @Select("select * from (select 消息表.id as 作业表id,标题,内容,创建时间,截至时间,发表者学号,first_name,image_url from 消息表,jhi_user,面向人群表 where jhi_user.login = 发表者学号 and 面向人群表.消息Id = 消息表.id and 面向人群表.学号 = #{stuID}  and  截至时间>now() and 消息类型 = #{type} and 逻辑删除 = 0) as 作业表 LEFT JOIN 点赞表 on 点赞表.消息id = 作业表.作业表id and 点赞表.点赞人学号 = #{stuID}")
     @Results({
         @Result(id =true,column ="作业表id",property = "id"),
         @Result(column = "标题",property = "title"),
@@ -56,6 +56,19 @@ public interface MessageMapper {
         @Result(column = "image_url",property = "postUserHeadPortraitUri"),
     })
     List<NoticeDTO> findNotice(@Param("type")long type,@Param("stuID")long stuID);
+
+    @Select("select 消息表.id as 作业表id,标题,内容,创建时间,截至时间,发表者学号,first_name,image_url from 消息表,jhi_user where jhi_user.login = 发表者学号 and 消息类型 = #{type}")
+    @Results({
+        @Result(id =true,column ="作业表id",property = "id"),
+        @Result(column = "标题",property = "title"),
+        @Result(column = "内容",property = "content"),
+        @Result(column = "创建时间",property = "createTime"),
+        @Result(column = "截至时间",property = "cutTime"),
+        @Result(column = "发表者学号",property = "postUserId"),
+        @Result(column = "first_name",property = "petName"),
+        @Result(column = "image_url",property = "postUserHeadPortraitUri"),
+    })
+    List<NoticeDTO> findAllNotice(@Param("type")long type);
 
     @Select("select 学号 from 面向人群表 where 消息Id =  #{msID}")
     @Results({

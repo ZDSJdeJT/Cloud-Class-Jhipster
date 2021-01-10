@@ -45,10 +45,29 @@ public class MessageController {
        for (NoticeDTO item:data) {
            item.setTagsCount(messageMapper.findTagsCount(item.getId()));
            item.setCommentsCount(messageMapper.findCommentsCount(item.getId()));
-           item.setForCrowd(messageMapper.findForCrowd(item.getId()));
        }
        return data;
     }
+    List<NoticeDTO> getAllNoticeORTask(int type){
+        List<NoticeDTO> data = messageMapper.findAllNotice(type);
+        for (NoticeDTO item:data) {
+            item.setTagsCount(messageMapper.findTagsCount(item.getId()));
+            item.setCommentsCount(messageMapper.findCommentsCount(item.getId()));
+            item.setForCrowd(messageMapper.findForCrowd(item.getId()));
+        }
+        return data;
+    }
+
+    @GetMapping("/getAllNotice")
+    List<NoticeDTO> getAllNotice(){
+        return getAllNoticeORTask(5);
+    }
+
+    @GetMapping("/getAllTask")
+    List<NoticeDTO> getAllTask(){
+        return getAllNoticeORTask(4);
+    }
+
 
     @GetMapping("/getComment")
     List<CommentDTO> getComment(@RequestParam(value = "id")long id,@RequestParam(value = "stuID")long stuID){
@@ -118,9 +137,15 @@ public class MessageController {
 
     @GetMapping("/trueDeleteMs")
     boolean trueDeleteMs(@RequestParam(value = "id")long id){
-
         return messageMapper.trueDelete(id)>1;
     }
+
+    @GetMapping("/trueDeleteNotice")
+    boolean trueDeleteNotice(@RequestParam(value = "id")long id){
+        messageMapper.deleteForCrowd(id);
+        return messageMapper.trueDelete(id)>1;
+    }
+
 
     @GetMapping("/falseDeleteMs")
     boolean falseDeleteMs(@RequestParam(value = "id")long id){

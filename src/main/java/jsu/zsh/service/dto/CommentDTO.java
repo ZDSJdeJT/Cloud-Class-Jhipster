@@ -15,7 +15,7 @@ public class CommentDTO {
     private Integer tagsCount;
     private Integer cCommentsCount;
     private String postUserHeadPortraitUri;
-
+    private String userHasTags;
     private List<cComment> comments;
 
     public String getPostUserHeadPortraitUri() {
@@ -28,6 +28,10 @@ public class CommentDTO {
 
     public Integer getTagsCount() {
         return tagsCount;
+    }
+
+    public boolean getUserHasTags(){
+        return userHasTags != null && !userHasTags.equals("");
     }
 
     public void setPetName(String petName) {

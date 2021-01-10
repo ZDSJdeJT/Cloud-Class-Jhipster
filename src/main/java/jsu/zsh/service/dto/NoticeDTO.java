@@ -14,6 +14,7 @@ public class NoticeDTO {
     private Integer tagsCount;
     private Integer commentsCount;
     private String postUserHeadPortraitUri;
+    private String userHasTags;
     List<Long> forCrowd;
 
     public void setCommentsCount(Integer commentsCount) {
@@ -24,7 +25,9 @@ public class NoticeDTO {
         this.tagsCount = tagsCount;
     }
 
-
+    public boolean getUserHasTags(){
+        return userHasTags != null && !userHasTags.equals("");
+    }
     public List<Long> getForCrowd() {
         return forCrowd;
     }

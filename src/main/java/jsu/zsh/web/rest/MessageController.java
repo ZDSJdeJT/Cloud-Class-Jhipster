@@ -21,8 +21,8 @@ public class MessageController {
     MessageMapper messageMapper;
 
     @GetMapping("/getDynamic")
-    List<DynamicDTO> getDynamic(){
-        List<DynamicDTO> dynamicDTOList = messageMapper.findDynamic();
+    List<DynamicDTO> getDynamic(@RequestParam(value = "stuID")long stuID){
+        List<DynamicDTO> dynamicDTOList = messageMapper.findDynamic(stuID);
         for (DynamicDTO item:dynamicDTOList) {
             item.setTagsCount(messageMapper.findTagsCount(item.getId()));
             item.setCommentsCount(messageMapper.findCommentsCount(item.getId()));
@@ -31,17 +31,17 @@ public class MessageController {
     }
 
     @GetMapping("/getNotice")
-    List<NoticeDTO> getNotice(){
-        return getNoticeORTask(5);
+    List<NoticeDTO> getNotice(@RequestParam(value = "stuID")long stuID){
+        return getNoticeORTask(5,stuID);
     }
 
     @GetMapping("/getTask")
-    List<NoticeDTO> getTask(){
-        return getNoticeORTask(4);
+    List<NoticeDTO> getTask(@RequestParam(value = "stuID")long stuID){
+        return getNoticeORTask(4,stuID);
     }
 
-   List<NoticeDTO> getNoticeORTask(int type){
-       List<NoticeDTO> data = messageMapper.findNotice(type);
+   List<NoticeDTO> getNoticeORTask(int type,long stuID){
+       List<NoticeDTO> data = messageMapper.findNotice(type,stuID);
        for (NoticeDTO item:data) {
            item.setTagsCount(messageMapper.findTagsCount(item.getId()));
            item.setCommentsCount(messageMapper.findCommentsCount(item.getId()));
@@ -51,10 +51,10 @@ public class MessageController {
     }
 
     @GetMapping("/getComment")
-    List<CommentDTO> getComment(@RequestParam(value = "id")long id){
-        List<CommentDTO> commentDTOS = messageMapper.findComment(id);
+    List<CommentDTO> getComment(@RequestParam(value = "id")long id,@RequestParam(value = "stuID")long stuID){
+        List<CommentDTO> commentDTOS = messageMapper.findComment(id,stuID);
         for (CommentDTO item:commentDTOS) {
-            item.setComments(messageMapper.findCComment(item.getId()));
+            item.setComments(messageMapper.findCComment(item.getId(),stuID));
             item.setcCommentsCount(item.getComments().size());
         }
         return commentDTOS;
@@ -87,6 +87,11 @@ public class MessageController {
                         @RequestParam(value = "replyId") Long replyId,
                         @RequestParam(value = "msID")long msID){
         return messageMapper.saveCComment(content,postUserId,commentId,replyId,msID)>0;
+    }
+
+    @PostMapping("/addTags")
+    boolean addTags(@Valid @RequestBody long stuID,@RequestParam(value = "msID")long msID){
+        return messageMapper.saveTags(msID,stuID)>0;
     }
 
     @PostMapping("/addTask")

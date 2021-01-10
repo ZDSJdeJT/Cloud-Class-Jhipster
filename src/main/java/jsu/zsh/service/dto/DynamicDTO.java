@@ -14,6 +14,7 @@ public class DynamicDTO
     private Integer tagsCount;
     private Integer commentsCount;
     private String postUserHeadPortraitUri;
+    private String userHasTags;
 
     public long getId() {
         return id;
@@ -31,6 +32,10 @@ public class DynamicDTO
         return postUserHeadPortraitUri;
     }
 
+
+    public boolean getUserHasTags(){
+        return userHasTags != null && !userHasTags.equals("");
+    }
 
     public void setTagsCount(Integer tagsCount) {
         this.tagsCount = tagsCount;

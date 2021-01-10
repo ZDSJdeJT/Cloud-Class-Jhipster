@@ -10,11 +10,16 @@ public class cComment{
     private long postUserId;
     private Integer tagsCount;
     private String replyPetName;
+    private String userHasTags;
     private String postUserHeadPortraitUri;
     private int commentId;
 
     public Date getCreateTime() {
         return createTime;
+    }
+
+   public boolean getUserHasTags(){
+        return userHasTags != null && !userHasTags.equals("");
     }
 
     public String getContent() {

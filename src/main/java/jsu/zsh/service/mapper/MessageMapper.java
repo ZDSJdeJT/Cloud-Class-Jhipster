@@ -31,8 +31,6 @@ public interface MessageMapper {
     Integer saveTags(@Param("msID")long msID,@Param("stuID")long stuID);
 
 
-
-
     @Insert("insert into 消息表(内容,创建时间,发表者学号,评论消息id,消息类型) values(#{context},now(),#{postUserID},#{msID},2)")
     @Options(useGeneratedKeys = true)
     int saveComment(@Param("content")String content,@Param("postUserID")long postUserID,@Param("msID")long msID);
@@ -46,9 +44,9 @@ public interface MessageMapper {
     @Options(useGeneratedKeys = true)
     int saveTask(Notice notice);
 
-    @Select("select * from (select 消息表.id as 作业表id,标题,内容,创建时间,截至时间,发表者学号,first_name,image_url from 消息表,jhi_user where 截至时间>now() and 消息类型 = #{type} and 逻辑删除 = 0) as 作业表 LEFT JOIN 点赞表 on 点赞表.消息id = 作业表.作业表id and 点赞表.点赞人学号 = #{stuID}")
+    @Select("select * from (select 消息表.id as 作业表id,标题,内容,创建时间,截至时间,发表者学号,first_name,image_url from 消息表,jhi_user where jhi_user.login = 发表者学号 and  截至时间>now() and 消息类型 = #{type} and 逻辑删除 = 0) as 作业表 LEFT JOIN 点赞表 on 点赞表.消息id = 作业表.作业表id and 点赞表.点赞人学号 = #{stuID}")
     @Results({
-        @Result(id =true,column ="id",property = "id"),
+        @Result(id =true,column ="作业表id",property = "id"),
         @Result(column = "标题",property = "title"),
         @Result(column = "内容",property = "content"),
         @Result(column = "创建时间",property = "createTime"),
@@ -110,7 +108,7 @@ public interface MessageMapper {
     })
     List<DynamicDTO> findDynamic(@Param("stuID") long stuID,@Param("Index") int index);
 
-    @Select("select * from (select 消息表.id as 消息表id,内容,创建时间,发表者学号,first_name,image_url from 消息表,jhi_user where login = 发表者学号 and 消息类型 = 2 and 评论消息id=#{id} and 逻辑删除 = 0) as 动态表 LEFT JOIN 点赞表 on 点赞表.消息id = 动态表.消息表id and 点赞表.点赞人学号 = #{stiID}")
+    @Select("select * from (select 消息表.id as 消息表id,内容,创建时间,发表者学号,first_name,image_url from 消息表,jhi_user where login = 发表者学号 and 消息类型 = 2 and 评论消息id=#{id} and 逻辑删除 = 0) as 动态表 LEFT JOIN 点赞表 on 点赞表.消息id = 动态表.消息表id and 点赞表.点赞人学号 = #{stuID}")
     @Results({
         @Result(id =true,column ="消息表id",property = "id"),
         @Result(column = "内容",property = "content"),

@@ -98,7 +98,7 @@ public interface MessageMapper {
     @Select("select count(评论消息id) from 消息表 where 评论消息id = #{msID}")
     Integer findCommentsCount(@Param("msID") long msID);
 
-    @Select("select * from (select 消息表.id as 消息表id,内容,创建时间,发表者学号,first_name,image_url from 消息表,jhi_user where login = 发表者学号 and 消息类型 = 1 and 逻辑删除 = 0) as 动态表 LEFT JOIN 点赞表 on 点赞表.消息id = 动态表.消息表id and 点赞表.点赞人学号 = #{stuID}")
+    @Select("select * from (select 消息表.id as 消息表id,内容,创建时间,发表者学号,first_name,image_url from 消息表,jhi_user where login = 发表者学号 and 消息类型 = 1 and 逻辑删除 = 0 ORDER BY 消息表id desc) as 动态表 LEFT JOIN 点赞表 on 点赞表.消息id = 动态表.消息表id and 点赞表.点赞人学号 = #{stuID} LIMIT #{Index},10")
     @Results({
         @Result(id =true,column ="消息表id",property = "id"),
         @Result(column = "内容",property = "content"),
@@ -108,7 +108,7 @@ public interface MessageMapper {
         @Result(column = "image_url",property = "postUserHeadPortraitUri"),
         @Result(column = "点赞人学号",property = "userHasTags")
     })
-    List<DynamicDTO> findDynamic(@Param("stuID") long stuID);
+    List<DynamicDTO> findDynamic(@Param("stuID") long stuID,@Param("Index") int index);
 
     @Select("select * from (select 消息表.id as 消息表id,内容,创建时间,发表者学号,first_name,image_url from 消息表,jhi_user where login = 发表者学号 and 消息类型 = 2 and 评论消息id=#{id} and 逻辑删除 = 0) as 动态表 LEFT JOIN 点赞表 on 点赞表.消息id = 动态表.消息表id and 点赞表.点赞人学号 = #{stiID}")
     @Results({

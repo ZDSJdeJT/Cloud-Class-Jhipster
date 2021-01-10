@@ -21,8 +21,8 @@ public class MessageController {
     MessageMapper messageMapper;
 
     @GetMapping("/getDynamic")
-    List<DynamicDTO> getDynamic(@RequestParam(value = "stuID")long stuID){
-        List<DynamicDTO> dynamicDTOList = messageMapper.findDynamic(stuID);
+    List<DynamicDTO> getDynamic(@RequestParam(value = "stuID")long stuID,@RequestParam(value = "page")int page){
+        List<DynamicDTO> dynamicDTOList = messageMapper.findDynamic(stuID,page*10);
         for (DynamicDTO item:dynamicDTOList) {
             item.setTagsCount(messageMapper.findTagsCount(item.getId()));
             item.setCommentsCount(messageMapper.findCommentsCount(item.getId()));

@@ -1,7 +1,5 @@
 package jsu.zsh.service.dto;
 
-import jsu.zsh.service.util.dateUtil;
-
 import java.util.Date;
 
 public class DynamicDTO
@@ -15,6 +13,11 @@ public class DynamicDTO
     private Integer commentsCount;
     private String postUserHeadPortraitUri;
     private String userHasTags;
+
+    public DynamicDTO(String content, long postUserId){
+        this.content = content;
+        this.postUserId = postUserId;
+    }
 
     public long getId() {
         return id;

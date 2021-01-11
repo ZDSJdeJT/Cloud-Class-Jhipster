@@ -1,7 +1,5 @@
 package jsu.zsh.web.rest;
 
-import jsu.zsh.domain.Message.Dynamic;
-import jsu.zsh.domain.Message.Message;
 import jsu.zsh.domain.Message.Notice;
 import jsu.zsh.service.dto.CommentDTO;
 import jsu.zsh.service.dto.DynamicDTO;
@@ -9,8 +7,11 @@ import jsu.zsh.service.dto.NoticeDTO;
 import jsu.zsh.service.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -81,7 +82,7 @@ public class MessageController {
 
     @PostMapping("/addDynamic")
     long addDynamic(@Valid @RequestBody String content,@RequestParam(value = "postUserId")long postUserId){
-        Message dynamic =new Dynamic(content,postUserId);
+        DynamicDTO dynamic =new DynamicDTO(content,postUserId);
         messageMapper.saveDynamic(dynamic);
         return dynamic.getId();
     }
@@ -146,6 +147,35 @@ public class MessageController {
         return messageMapper.trueDelete(id)>1;
     }
 
+    @PostMapping("/upTask")
+    public String upTask(@RequestBody MultipartFile file,
+                         @RequestParam(required = false,value = "taskText",defaultValue = "") String text,
+                         @RequestParam(value = "taskID") long taskID,
+                         @RequestParam(value = "stuID")long stuID){
+        if (file.isEmpty()) {
+            return "上传失败，请选择文件";
+        }
+        StringBuilder taskPath = new StringBuilder();
+        taskPath.append("C:/taskFiles/").append(taskID).append("/").append(file.getOriginalFilename());
+        File dest = new File(taskPath.toString());
+        try {
+            if(!dest.getParentFile().exists()){
+                dest.getParentFile().mkdirs();
+            }
+            if(dest.exists()){
+                dest.delete();
+            }
+            else{
+                messageMapper.saveTaskState(taskID,stuID,taskPath.toString(),text);
+                messageMapper.deleteForCrowdByStuID(taskID,stuID);
+            }
+            file.transferTo(dest);
+            return "上传成功";
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return "上传失败！";
+    }
 
     @GetMapping("/falseDeleteMs")
     boolean falseDeleteMs(@RequestParam(value = "id")long id){

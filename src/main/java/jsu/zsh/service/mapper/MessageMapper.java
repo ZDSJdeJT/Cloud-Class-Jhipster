@@ -1,7 +1,5 @@
 package jsu.zsh.service.mapper;
 
-
-import jsu.zsh.domain.Message.Message;
 import jsu.zsh.domain.Message.Notice;
 import jsu.zsh.service.dto.CommentDTO;
 import jsu.zsh.service.dto.DynamicDTO;
@@ -18,7 +16,7 @@ public interface MessageMapper {
 
     @Insert("insert into 消息表(内容,创建时间,发表者学号,消息类型) values(#{content},now(),#{postUserId},1)")
     @Options(useGeneratedKeys = true,keyProperty ="id")
-    int saveDynamic(Message message);
+    int saveDynamic(DynamicDTO message);
 
     @Insert("insert into 消息表(标题,内容,创建时间,截至时间,发表者学号,消息类型) values(#{title},#{content},now(),#{cutTime},#{postUserId},#{type})")
     @Options(useGeneratedKeys = true,keyProperty ="id")
@@ -31,12 +29,12 @@ public interface MessageMapper {
     Integer saveTags(@Param("msID")long msID,@Param("stuID")long stuID);
 
 
-    @Insert("insert into 消息表(内容,创建时间,发表者学号,评论消息id,消息类型) values(#{context},now(),#{postUserID},#{msID},2)")
+    @Insert("insert into 消息表(内容,创建时间,发表者学号,评论消息id,消息类型) values(#{content},now(),#{postUserID},#{msID},2)")
     @Options(useGeneratedKeys = true)
     int saveComment(@Param("content")String content,@Param("postUserID")long postUserID,@Param("msID")long msID);
 
 
-    @Insert("insert into 消息表(内容,创建时间,发表者学号,回复评论id,评论评论id,评论消息id,消息类型) values(#{context},now(),#{postUserID},#{replyId},#{commentId}#{msID},3)")
+    @Insert("insert into 消息表(内容,创建时间,发表者学号,回复评论id,评论评论id,评论消息id,消息类型) values(#{content},now(),#{postUserID},#{replyId},#{commentId}#{msID},3)")
     @Options(useGeneratedKeys = true)
     int saveCComment(@Param("content")String content,@Param("postUserID")long postUserID,@Param("replyId")Long replyId,@Param("commentId")long commentId,@Param("msID")long msID);
 
@@ -76,32 +74,6 @@ public interface MessageMapper {
     })
     List<Long> findForCrowd(@Param("msID")long msID);
 
-    @Select("select * from 消息表 where 创建时间> #{sTime} and 创建时间 < #{eTime} and 逻辑删除 = 0")
-    @Results({
-        @Result(id =true,column ="id",property = "id"),
-        @Result(column = "创建时间",property = "createTime")
-    })
-    Message findByTime(@Param("sTime") Date sTime, @Param("eTime") Date eTime);
-
-
-    @Select("select * from 消息表 where 消息类型 = #{type} and 创建时间> #{sTime} and 创建时间 < #{eTime} and 逻辑删除 = 0")
-    @Results({
-        @Result(id =true,column ="id",property = "id"),
-        @Result(column = "创建时间",property = "createTime")
-    })
-    Message findByTimeAndType(@Param("sTime") Date sTime, @Param("eTime") Date eTime,@Param("type") int type);
-
-
-    //查询
-    @Select("select * from 消息表 where 消息类型 = #{type}  and 逻辑删除 = 0")
-    @Results({
-        @Result(id =true,column ="id",property = "id"),
-        @Result(column = "内容",property = "content"),
-        @Result(column = "创建时间",property = "createTime"),
-        @Result(column = "发表者学号",property = "postUserId")
-
-    })
-    List<Message> findMsByType(@Param("type") int type);
 
     @Select("select count(点赞人学号) from 点赞表 where 消息id = #{msID}")
     Integer findTagsCount(@Param("msID") long msID);
@@ -157,6 +129,9 @@ public interface MessageMapper {
     @Delete("delete from 面向人群表 where 消息Id = #{msId}")
     int deleteForCrowd(@Param("msId") long msId);
 
+    @Delete("delete from 面向人群表 where 消息Id = #{msId}  and 学号 = #{stuId}")
+    int deleteForCrowdByStuID(@Param("msId") long msId,@Param("stuId") long stuId);
+
     @Update("update 消息表 set 标题 = #{title} where id = #{id}")
     int updateTitle(@Param("title") String title,@Param("id") long id);
 
@@ -169,5 +144,7 @@ public interface MessageMapper {
     @Update("update 消息表 set 标题 = #{title},内容 =  #{text},截至时间 = #{eTime} where id = #{id}")
     int updateNotice(Notice notice);
 
+    @Insert("insert into 作业提交表(作业id, 提交人学号, 文件路径, 文本内容) value (#{taskID},#{stuID},#{filePath},#{taskText})")
+    Integer saveTaskState(@Param("taskID")long taskID,@Param("stuID")long stuID,@Param("filePath")String filePath,@Param("taskText")String text);
 
 }

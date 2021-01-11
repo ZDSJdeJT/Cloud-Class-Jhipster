@@ -30,16 +30,13 @@ public interface MessageMapper {
 
 
     @Insert("insert into 消息表(内容,创建时间,发表者学号,评论消息id,消息类型) values(#{content},now(),#{postUserID},#{msID},2)")
-    @Options(useGeneratedKeys = true)
     int saveComment(@Param("content")String content,@Param("postUserID")long postUserID,@Param("msID")long msID);
 
 
-    @Insert("insert into 消息表(内容,创建时间,发表者学号,回复评论id,评论评论id,评论消息id,消息类型) values(#{content},now(),#{postUserID},#{replyId},#{commentId}#{msID},3)")
-    @Options(useGeneratedKeys = true)
+    @Insert("insert into 消息表(内容,创建时间,发表者学号,回复评论id,评论评论id,评论消息id,消息类型) values(#{content},now(),#{postUserID},#{replyId},#{commentId},#{msID},3)")
     int saveCComment(@Param("content")String content,@Param("postUserID")long postUserID,@Param("replyId")Long replyId,@Param("commentId")long commentId,@Param("msID")long msID);
 
     @Insert("insert into 消息表(标题,内容,创建时间,截至时间,发表者学号,消息类型) values(#{title},#{content},now(),#{cutTime},#{postUserId},4)")
-    @Options(useGeneratedKeys = true)
     int saveTask(Notice notice);
 
     @Select("select * from (select 消息表.id as 作业表id,标题,内容,创建时间,截至时间,发表者学号,first_name,image_url from 消息表,jhi_user,面向人群表 where jhi_user.login = 发表者学号 and 面向人群表.消息Id = 消息表.id and 面向人群表.学号 = #{stuID}  and  截至时间>now() and 消息类型 = #{type} and 逻辑删除 = 0) as 作业表 LEFT JOIN 点赞表 on 点赞表.消息id = 作业表.作业表id and 点赞表.点赞人学号 = #{stuID}")

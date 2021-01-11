@@ -104,7 +104,7 @@ public class MessageController {
     boolean addCComment(@Valid @RequestBody String content,
                         @RequestParam(value = "postUserId")long postUserId,
                         @RequestParam(value = "commentId")long commentId,
-                        @RequestParam(value = "replyId") Long replyId,
+                        @RequestParam(value = "replyId",required = false,defaultValue = "") Long replyId,
                         @RequestParam(value = "msID")long msID){
         return messageMapper.saveCComment(content,postUserId,commentId,replyId,msID)>0;
     }

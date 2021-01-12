@@ -103,7 +103,7 @@ public interface MessageMapper {
     List<CommentDTO> findComment(@Param("id") long parentId,@Param("stuID") long stuID);
 
     @Select("select * from (SELECT 消息表.id as 消息表id,内容,创建时间,发表者学号,回复人名表.回复人名,first_name,image_url FROM 消息表,jhi_user,(SELECT 回复人.first_name AS 回复人名,回复.id as 回复id FROM jhi_user AS 回复人,消息表 AS 回复 WHERE 回复人.login = 回复.发表者学号)\n" +
-        "AS 回复人名表 WHERE login = 发表者学号 AND 回复id = 评论消息id AND 消息类型 = 3 AND 评论评论id = #{id} and 逻辑删除 = 0) as 评论回复表 LEFT JOIN 点赞表 on 点赞表.消息id = 评论回复表.消息表id and 点赞表.点赞人学号 = #{stuID}")
+        "AS 回复人名表 WHERE login = 发表者学号 AND 回复id = 回复评论id AND 消息类型 = 3 AND 评论评论id = #{id} and 逻辑删除 = 0) as 评论回复表 LEFT JOIN 点赞表 on 点赞表.消息id = 评论回复表.消息表id and 点赞表.点赞人学号 = #{stuID}")
     @Results({
         @Result(id =true,column ="消息表id",property = "id"),
         @Result(column = "内容",property = "content"),

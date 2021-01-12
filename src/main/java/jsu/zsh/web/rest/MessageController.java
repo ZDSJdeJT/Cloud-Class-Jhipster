@@ -23,6 +23,7 @@ public class MessageController {
 
     @GetMapping("/getDynamic")
     List<DynamicDTO> getDynamic(@RequestParam(value = "stuID")long stuID,@RequestParam(value = "page")int page){
+        System.out.println(messageMapper.findDynamic(stuID,page*10));
         List<DynamicDTO> dynamicDTOList = messageMapper.findDynamic(stuID,page*10);
         for (DynamicDTO item:dynamicDTOList) {
             item.setTagsCount(messageMapper.findTagsCount(item.getId()));
@@ -82,7 +83,9 @@ public class MessageController {
 
     @PostMapping("/addDynamic")
     long addDynamic(@Valid @RequestBody String content,@RequestParam(value = "postUserId")long postUserId){
-        DynamicDTO dynamic =new DynamicDTO(content,postUserId);
+        DynamicDTO dynamic =new DynamicDTO();
+        dynamic.setContent(content);
+        dynamic.setPostUserId(postUserId);
         messageMapper.saveDynamic(dynamic);
         return dynamic.getId();
     }
@@ -104,9 +107,9 @@ public class MessageController {
     boolean addCComment(@Valid @RequestBody String content,
                         @RequestParam(value = "postUserId")long postUserId,
                         @RequestParam(value = "commentId")long commentId,
-                        @RequestParam(value = "replyId",required = false,defaultValue = "") Long replyId,
+                        @RequestParam(value = "replyId") long replyId,
                         @RequestParam(value = "msID")long msID){
-        return messageMapper.saveCComment(content,postUserId,commentId,replyId,msID)>0;
+        return messageMapper.saveCComment(content,postUserId,replyId,commentId,msID)>0;
     }
 
     @PostMapping("/addTags")

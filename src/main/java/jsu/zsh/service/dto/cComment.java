@@ -10,9 +10,20 @@ public class cComment{
     private long postUserId;
     private Integer tagsCount;
     private String replyPetName;
+
     private String userHasTags;
     private String postUserHeadPortraitUri;
     private int commentId;
+
+    public String getReplyPetName() {
+        return replyPetName;
+    }
+
+    public void setUserHasTags(String userHasTags) {
+        this.userHasTags = userHasTags;
+    }
+
+
 
     public Date getCreateTime() {
         return createTime;

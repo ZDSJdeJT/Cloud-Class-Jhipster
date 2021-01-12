@@ -4,20 +4,15 @@ import java.util.Date;
 
 public class DynamicDTO
 {
-    private long id;
-    private String content;
-    private String petName;
-    private Date createTime;
-    private long postUserId;
-    private Integer tagsCount;
-    private Integer commentsCount;
-    private String postUserHeadPortraitUri;
-    private String userHasTags;
-
-    public DynamicDTO(String content, long postUserId){
-        this.content = content;
-        this.postUserId = postUserId;
-    }
+    public long id;
+    public String content;
+    public String petName;
+    public Date createTime;
+    public long postUserId;
+    public Integer tagsCount;
+    public Integer commentsCount;
+    public String postUserHeadPortraitUri;
+    public String userHasTags;
 
     public long getId() {
         return id;
@@ -33,6 +28,11 @@ public class DynamicDTO
 
     public String getPostUserHeadPortraitUri() {
         return postUserHeadPortraitUri;
+    }
+
+
+    public void setUserHasTags(String userHasTags) {
+        this.userHasTags = userHasTags;
     }
 
 

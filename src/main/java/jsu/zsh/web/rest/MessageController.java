@@ -4,6 +4,7 @@ import jsu.zsh.domain.Message.Notice;
 import jsu.zsh.service.dto.CommentDTO;
 import jsu.zsh.service.dto.DynamicDTO;
 import jsu.zsh.service.dto.NoticeDTO;
+import jsu.zsh.service.dto.TaskDTO;
 import jsu.zsh.service.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,19 @@ public class MessageController {
         return getNoticeORTask(4,stuID);
     }
 
-   List<NoticeDTO> getNoticeORTask(int type,long stuID){
+    @GetMapping("/getTaskByID")
+    TaskDTO getTaskByID(@RequestParam(value = "stuID")long stuID,
+                        @RequestParam(value = "msID")long msID){
+        TaskDTO task = messageMapper.findTaskById(msID,stuID);
+        task.setTagsCount(messageMapper.findTagsCount(task.getId()));
+        task.setCommentsCount(messageMapper.findCommentsCount(task.getId()));
+        task.setForCrowd(messageMapper.findForCrowdName(task.getId()));
+        task.setFinishStu(messageMapper.findFinishStu(task.getId()));
+        return task;
+    }
+
+
+    List<NoticeDTO> getNoticeORTask(int type,long stuID){
        List<NoticeDTO> data = messageMapper.findNotice(type,stuID);
        for (NoticeDTO item:data) {
            item.setTagsCount(messageMapper.findTagsCount(item.getId()));

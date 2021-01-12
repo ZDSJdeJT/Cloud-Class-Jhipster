@@ -66,8 +66,8 @@ public class CommentDTO {
         return content;
     }
 
-    public String getCreateTime() {
-        return dateUtil.sdf.format(createTime);
+    public Date getCreateTime() {
+        return createTime;
     }
 
     public void setContent(String content) {

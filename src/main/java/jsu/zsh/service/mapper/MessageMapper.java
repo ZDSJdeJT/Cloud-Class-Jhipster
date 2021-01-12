@@ -1,10 +1,7 @@
 package jsu.zsh.service.mapper;
 
 import jsu.zsh.domain.Message.Notice;
-import jsu.zsh.service.dto.CommentDTO;
-import jsu.zsh.service.dto.DynamicDTO;
-import jsu.zsh.service.dto.NoticeDTO;
-import jsu.zsh.service.dto.cComment;
+import jsu.zsh.service.dto.*;
 import jsu.zsh.service.provider.messageProvider;
 import org.apache.ibatis.annotations.*;
 
@@ -67,10 +64,22 @@ public interface MessageMapper {
 
     @Select("select 学号 from 面向人群表 where 消息Id =  #{msID}")
     @Results({
-        @Result(column ="学号",property = "id"),
+        @Result(column ="学号")
     })
     List<Long> findForCrowd(@Param("msID")long msID);
 
+    @Select("select last_name from 面向人群表,jhi_user where jhi_user.login = 面向人群表.学号 and 消息Id =  #{msID}")
+    @Results({
+        @Result(column ="last_name")
+    })
+    List<String> findForCrowdName(@Param("msID")long msID);
+
+
+    @Select("select last_name from 作业提交表,jhi_user where jhi_user.login = 作业提交表.提交人学号 and 作业Id =  #{msID}")
+    @Results({
+        @Result(column ="last_name",property = "id"),
+    })
+    List<String> findFinishStu(@Param("msID")long msID);
 
     @Select("select count(点赞人学号) from 点赞表 where 消息id = #{msID}")
     Integer findTagsCount(@Param("msID") long msID);
@@ -143,5 +152,19 @@ public interface MessageMapper {
 
     @Insert("insert into 作业提交表(作业id, 提交人学号, 文件路径, 文本内容) value (#{taskID},#{stuID},#{filePath},#{taskText})")
     Integer saveTaskState(@Param("taskID")long taskID,@Param("stuID")long stuID,@Param("filePath")String filePath,@Param("taskText")String text);
+
+    @Select("select * from (select 消息表.id as 作业表id,标题,内容,创建时间,截至时间,发表者学号,first_name,image_url from 消息表,jhi_user where jhi_user.login = 发表者学号 and  消息表.id = #{id}) as 作业表 LEFT JOIN 点赞表 on 点赞表.消息id = 作业表.作业表id and 点赞表.点赞人学号 = #{stuID}")
+    @Results({
+        @Result(id =true,column ="作业表id",property = "id"),
+        @Result(column = "标题",property = "title"),
+        @Result(column = "内容",property = "content"),
+        @Result(column = "创建时间",property = "createTime"),
+        @Result(column = "截至时间",property = "cutTime"),
+        @Result(column = "发表者学号",property = "postUserId"),
+        @Result(column = "first_name",property = "petName"),
+        @Result(column = "image_url",property = "postUserHeadPortraitUri"),
+    })
+    TaskDTO findTaskById(@Param("id")long id, @Param("stuID")long stuID);
+
 
 }
